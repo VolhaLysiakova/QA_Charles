@@ -1,0 +1,168 @@
+{
+	"info": {
+		"_postman_id": "52aa6c36-f343-4c75-84bf-716e4c67b3bc",
+		"name": "For Charles",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "object_info_1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/object_info_1?age={{age}}&weight={{weight}}&name={{name}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"object_info_1"
+					],
+					"query": [
+						{
+							"key": "age",
+							"value": "{{age}}"
+						},
+						{
+							"key": "weight",
+							"value": "{{weight}}"
+						},
+						{
+							"key": "name",
+							"value": "{{name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "login",
+							"value": "Volha",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User_info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let salary = Number(pm.variables.get('salary'));;\r",
+							"pm.test(\"Salary index\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.start_qa_salary).to.eq(salary);\r",
+							"    pm.expect(jsonData.qa_salary_after_6_months).to.eq(salary*2);\r",
+							"    pm.expect(jsonData.qa_salary_after_12_months).to.eq(salary*2.9);\r",
+							"    pm.expect(jsonData.person.u_salary_1_5_year).to.eq(salary*4);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"qa_salary_after_6_months\": {\"type\": \"number\"},\r",
+							"        \"qa_salary_after_12_months\": {\"type\": \"number\"},\r",
+							"        \"start_qa_salary\": {\"type\": \"number\"},\r",
+							"        \r",
+							"        \"person\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"properties\": { \r",
+							"                \"u_name\": {\r",
+							"                \"type\": \"array\",\r",
+							"                \"items\": [\r",
+							"                   {\"type\": \"string\"},\r",
+							"                   {\"type\": \"number\"},\r",
+							"                   {\"type\": \"number\"} \r",
+							"                 ]\r",
+							"                },\r",
+							"            \"u_age\": {\"type\": \"number\"},\r",
+							"            \"u_salary_1_5_year\": {\"type\": \"number\"},\r",
+							"           }\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Valid\", function(){\r",
+							"    pm.response.to.have.jsonSchema(schema)\r",
+							"})\r",
+							"\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"u_salary_1_5_year\", jsonData.person.u_salary_1_5_year)\r",
+							"\r",
+							"/*var request_data = request.data; получаем переменную из body\r",
+							"var req_age1 = request_data.age;*/"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"auth_token\":\"{{token}}\",\r\n    \"name\":\"{{name}}\",\r\n    \"age\":\"{{age}}\",\r\n    \"salary\": \"{{salary}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/user_info",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user_info"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
